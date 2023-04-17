@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="style.css">
+      </head>
+      
+<head>
+	<title>Sistem Kasir</title>
+</head>
+<body>
+	<h1>Sistem Kasir</h1>
+	
+	<!-- daftar barang -->
+	<h2>Daftar Barang</h2>
+	<ul id="daftar-barang">
+		<li><a href="#" onclick="tambahBarang('pot kelapa', 50000)">pot kelapa</a></li>
+		<li><a href="#" onclick="tambahBarang('sendok kayu', 2000)">sendok kayu</a></li>
+		<li><a href="#" onclick="tambahBarang('telanan kayu', 5000)">talenan kayu</a></li>
+		<li><a href="#" onclick="tambahBarang('garpu kayu', 3000)">garpu kayu</a></li>
+	</ul>
+	
+	<!-- catatan kasir -->
+	<h2>Catatan Kasir</h2>
+	<table id="catatan-kasir">
+		<tr>
+			<th>Tanggal</th>
+			<th>Nama Barang</th>
+			<th>Harga Satuan</th>
+			<th>Jumlah</th>
+			<th>Total Harga</th>
+			<th>Aksi</th>
+		</tr>
+	</table>
+	
+	<!-- total pembayaran -->
+	<h2>Total Pembayaran</h2>
+	<p id="total-pembayaran">0</p>
+	
+	<!-- tombol pembayaran -->
+	<button onclick="bayar()">Bayar</button>
+	
+	<!-- script JavaScript -->
+	<script>
+		var catatan = []; // array untuk menyimpan catatan kasir
+		var totalPembayaran = 0; // variabel untuk menyimpan total pembayaran
+		
+		// fungsi untuk menambah barang ke catatan kasir
+		function tambahBarang(nama, hargaSatuan) {
+			var index = catatan.findIndex(function(item) {
+				return item.nama === nama;
+			});
+			if (index >= 0) {
+				catatan[index].jumlah += 1;
+				catatan[index].totalHarga = catatan[index].jumlah * hargaSatuan;
+			} else {
+				catatan.push({
+					tanggal: new Date().toISOString().slice(0, 10),
+					nama: nama,
+					hargaSatuan: hargaSatuan,
+					jumlah: 1,
+					totalHarga: hargaSatuan
+				});
+			}
+			renderCatatanKasir();
+		}
+		
+		// fungsi untuk menghapus barang dari catatan kasir
+		function hapusBarang(nama) {
+			var index = catatan.findIndex(function(item) {
+				return item.nama === nama;
+			});
+			catatan.splice(index, 1);
+			renderCatatanKasir();
+		}
+		
+		// fungsi untuk merender catatan kasir ke dalam tabel
+		function renderCatatanKasir() {
+			var table = document.getElementById('catatan-kasir');
+			// hapus semua baris kecuali header
+			while (table.rows.length > 1) {
+				table.deleteRow(1);
+			}
+			// tambahkan baris baru untuk setiap item di catatan
+			catatan.forEach(function(item) {
+				var row = table.insertRow();
+				row.insertCell().innerHTML = item.tanggal;
+				row.insertCell().innerHTML = item.nama;
+				row.insertCell().innerHTML = item.hargaSat
+				row.insertCell().innerHTML = item.jumlah;
+				row.insertCell().innerHTML = item.totalHarga;
+				// tambahkan tombol hapus pada kolom aksi
+				var button = document.createElement('button');
+				button.innerHTML = 'Hapus';
+				button.onclick = function() {
+					hapusBarang(item.nama);
+				}
+				row.insertCell().appendChild(button);
+				// hitung total pembayaran
+				totalPembayaran += item.totalHarga;
+			});
+			// render total pembayaran
+			document.getElementById('total-pembayaran').innerHTML = totalPembayaran;
+		}
+		
+		// fungsi untuk melakukan pembayaran
+		function bayar() {
+			alert('Total pembayaran: ' + totalPembayaran);
+			catatan = [];
+			totalPembayaran = 0;
+			renderCatatanKasir();
+		}
+	</script>
+</body>
+</html>
